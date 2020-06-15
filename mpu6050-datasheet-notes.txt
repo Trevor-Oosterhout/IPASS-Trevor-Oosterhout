@@ -1,0 +1,25 @@
+datasheet:
+https://invensense.tdk.com/wp-content/uploads/2015/02/MPU-6000-Datasheet1.pdf
+
+unit of meusurement:
+LSB/g
+LSB = least significant bit 
+g = gravity 
+(mV/g)
+
+"the parts feature a user-programmable gyroscope full-scale range of ±250, ±500, ±1000, and
+±2000°/sec (dps) and a user-programmable accelerometer full-scale range of ±2g, ±4g, ±8g, and ±16g."
+
+"For power supply flexibility, the MPU-60X0 operates from VDD power supply voltage range of 2.375V-3.46V. "
+
+"The slave address of the MPU-60X0 is b110100X which is 7 bits long. The LSB bit of the 7 bit address is
+determined by the logic level on pin AD0. This allows two MPU-60X0s to be connected to the same I2C bus.
+When used in this configuration, the address of the one of the devices should be b1101000 (pin AD0 is logic
+low) and the address of the other should be b1101001 (pin AD0 is logic high). "
+
+address:
+if(AD0 == low)
+0x68
+if(AD) == high)
+0x69
+
