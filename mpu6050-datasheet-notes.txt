@@ -23,3 +23,7 @@ if(AD0 == low)
 if(AD) == high)
 0x69
 
+"The MPU-60X0 always operates as a slave device when communicating to the system processor, which thus
+acts as the master. SDA and SCL lines typically need pull-up resistors to VDD. The maximum bus speed is
+400 kHz. 
+"
