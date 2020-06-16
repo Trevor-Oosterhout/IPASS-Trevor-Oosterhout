@@ -1,0 +1,7 @@
+*.c
+*.o
+*.elf
+*.bin
+*.exe
+*.map
+*.ld

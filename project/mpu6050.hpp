@@ -2,9 +2,16 @@
 #define MPU6050_HPP
 
 
+/// @file
+
+/// \brief
+///
+/// \details
+///
+
 class mpu6050{
 protected:
-  
+
 
 
 public:
