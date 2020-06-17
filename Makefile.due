@@ -1,0 +1,16 @@
+#############################################################################
+#
+# makefile.due common settings for Arduino Due projects
+#
+# (c) Wouter van Ooijen (www.voti.nl) 2017
+#
+# This file is in the public domain.
+# 
+#############################################################################
+
+# settings for Arduino Due projects
+TARGET            := arduino_due
+CONSOLE_BAUDRATE  := 2400
+
+# defer to the Makefile.link
+include           $(RELATIVE)/Makefile.link
