@@ -24,14 +24,17 @@ void mpu6050::disable_sleep_mode(){
 
 
 /// \brief
-/// returns accel -x -y -z (signed) integers in array in that order in milli m/s^2
+/// returns accel -x -y -z (signed) 16 bit integers in array in that order in milli m/s^2
 /// \details
-/// this function returns the sensors acceleration measurements as (signed) integers
+/// this function returns the sensors acceleration measurements as (signed) 16 bit integers
 /// in an array in the order of x, y, z the return values should be interpeted
 /// as milli m/s^2
-std::array<int, accel_measurements_size> mpu6050::accel_measurements(){
-  int accel_x, accel_y, accel_z;
+std::array<int16_t, accel_measurements_size> mpu6050::accel_measurements(){
+  int16_t accel_x, accel_y, accel_z;
   uint8_t result [6];
+  int sensitivity = 2048 * exponent(2, accel_sensitivity);
+
+
   {
     auto mpu = ((hwlib::i2c_bus*)&i2c)->write(adres);
     mpu.write(0x3B);
@@ -40,23 +43,27 @@ std::array<int, accel_measurements_size> mpu6050::accel_measurements(){
     auto mpu = ((hwlib::i2c_bus*)&i2c)->read(adres);
     mpu.read(result, 6);
   }
-  accel_x = (result[0] << 8 | result[1]) * 1000 / 2048 * exponent(2, accel_sensitivity);
-  accel_y = (result[2] << 8 | result[3]) * 1000 / 2048 * exponent(2, accel_sensitivity);
-  accel_z = (result[4] << 8 | result[5]) * 1000 / 2048 * exponent(2, accel_sensitivity);
+  accel_x = result[0] << 8 | result[1];
+  accel_y = result[2] << 8 | result[3];
+  accel_z = result[4] << 8 | result[5];
 
-  std::array<int, accel_measurements_size> measurements = {accel_x, accel_y, accel_z};
+  accel_x = accel_x * 1000 / sensitivity;
+  accel_y = accel_y * 1000 / sensitivity;
+  accel_z = accel_z * 1000 / sensitivity;
+
+  std::array<int16_t, accel_measurements_size> measurements = {accel_x, accel_y, accel_z};
 
   return measurements;
 }
 
 
 /// \brief
-/// returns temprature as (signed) integer in degrees Celsius
+/// returns temprature as (signed) 16 bit integer in degrees Celsius
 /// \details
-/// this function returns the sensors temprature measurements as a (signed) integer
+/// this function returns the sensors temprature measurements as a (signed) 16 bit integer
 /// the integer should be interpeted in degrees Celsius
-int mpu6050::temp_measurements(){
-  int temprature;
+int16_t mpu6050::temp_measurements(){
+  int16_t temprature;
   uint8_t result [2];
   {
     auto mpu = ((hwlib::i2c_bus*)&i2c)->write(adres);
@@ -66,21 +73,25 @@ int mpu6050::temp_measurements(){
     auto mpu = ((hwlib::i2c_bus*)&i2c)->read(adres);
     mpu.read(result, 2);
   }
-  temprature = (result[0] << 8 | result[1]) / 340 + 36.53;
+  temprature = result[0] << 8 | result[1];
+
+  temprature = temprature / 340 + 37;
 
   return temprature;
 }
 
 
 /// \brief
-/// returns accel -x -y -z (signed) integers in array in that order in degrees/s
+/// returns accel -x -y -z (signed) 16 bit integers in array in that order in degrees/s
 /// \details
-/// this function returns the sensors gyro measurements as (signed) integers
+/// this function returns the sensors gyro measurements as (signed) 16 bit integers
 /// in an array in the order of x, y, z the return values should be interpeted
 /// as degrees per second
-std::array<int, gyro_measurements_size> mpu6050::gyro_measurements(){
-  int gyro_x, gyro_y, gyro_z;
+std::array<int16_t, gyro_measurements_size> mpu6050::gyro_measurements(){
+  int16_t gyro_x, gyro_y, gyro_z;
   uint8_t result [6];
+  int sensitivity = 16.4 * exponent(2, gyro_sensitivity);
+
   {
     auto mpu = ((hwlib::i2c_bus*)&i2c)->write(adres);
     mpu.write(0x43);
@@ -89,11 +100,15 @@ std::array<int, gyro_measurements_size> mpu6050::gyro_measurements(){
     auto mpu = ((hwlib::i2c_bus*)&i2c)->read(adres);
     mpu.read(result, 6);
   }
-  gyro_x = (result[0] << 8 | result[1]) * 1000 / 16.4 * exponent(2, gyro_sensitivity);
-  gyro_y = (result[2] << 8 | result[3]) * 1000 / 16.4 * exponent(2, gyro_sensitivity);
-  gyro_z = (result[4] << 8 | result[5]) * 1000 / 16.4 * exponent(2, gyro_sensitivity);
+  gyro_x = result[0] << 8 | result[1];
+  gyro_y = result[2] << 8 | result[3];
+  gyro_z = result[4] << 8 | result[5];
 
-  std::array<int, gyro_measurements_size> measurements = {gyro_x, gyro_y, gyro_z};
+  gyro_x = gyro_x / sensitivity;
+  gyro_y = gyro_y / sensitivity;
+  gyro_z = gyro_z / sensitivity;
+
+  std::array<int16_t, gyro_measurements_size> measurements = {gyro_x, gyro_y, gyro_z};
 
   return measurements;
 }
@@ -105,6 +120,7 @@ std::array<int, gyro_measurements_size> mpu6050::gyro_measurements(){
 ///
 void mpu6050::calibrate_accel_sensitivity(uint8_t range){
   if(range < 4){
+    gyro_sensitivity = range;
     range = range << 3;
     {
       auto mpu = ((hwlib::i2c_bus*)&i2c)->write(adres);

@@ -14,8 +14,8 @@ class mpu6050{
 private:
   const uint8_t adres;
   hwlib::i2c_bus_bit_banged_scl_sda & i2c;
-  int accel_sensitivity;
-  int gyro_sensitivity;
+  unsigned int accel_sensitivity;
+  unsigned int gyro_sensitivity;
 
 public:
   /// \brief
@@ -32,13 +32,13 @@ public:
 
   void disable_sleep_mode();
 
-  std::array<int, 3> accel_measurements();
+  std::array<int16_t, 3> accel_measurements();
 
-  int temp_measurements();
+  int16_t temp_measurements();
 
-  std::array<int, 3> gyro_measurements();
+  std::array<int16_t, 3> gyro_measurements();
 
-
+  void calibrate_accel_sensitivity(uint8_t range);
 
 
 };

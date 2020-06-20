@@ -8,10 +8,16 @@ int main( void ){
   auto scl = hwlib::target::pin_oc( hwlib::target::pins::scl );
   auto sda = hwlib::target::pin_oc( hwlib::target::pins::sda );
 
+  uint8_t x = 2;
+  int y = x;
+  hwlib::cout << "x = " << x <<  '\n';
+  hwlib::cout << "y = " << y <<  '\n';
+
+
  // ic2 bus
   auto i2c = hwlib::i2c_bus_bit_banged_scl_sda( scl,sda );
 
-  int acx, acy , acz, tmp, gyx, gyy, gyz;
+  int16_t acx, acy , acz, tmp, gyx, gyy, gyz;
   uint8_t result [14];
 
   uint8_t read [1];
@@ -37,7 +43,7 @@ int main( void ){
     mpu.read(read, 1);
   }
 
-  hwlib::cout << "1c register "  << read[0] << "\n";
+  // hwlib::cout << "1c register "  << read[0] << "\n";
 
   {
     auto mpu = ((hwlib::i2c_bus*)&i2c)->write(adress);
@@ -60,20 +66,29 @@ int main( void ){
     }
     hwlib::wait_ms(100);
 
-    acx = (result[0] << 8 | result[1]) * 1000 / 16348;
-    acy = (result[2] << 8 | result[3]) * 1000 / 16384;
-    acz = (result[4] << 8 | result[5]) * 1000 / 16384;
-    tmp = (result[6] << 8 | result[7]) / 340.0f + 36.53;
-    gyx = (result[8] << 8 | result[9]) / 131;
-    gyy = (result[10] << 8 | result[11]) /131;
-    gyz = (result[12] << 8 | result[13]) /131;
+    acx = result[0] << 8 | result[1];
+    acy = result[2] << 8 | result[3];
+    acz = result[4] << 8 | result[5];
+    tmp = result[6] << 8 | result[7];
+    gyx = result[8] << 8 | result[9];
+    gyy = result[10] << 8 | result[11];
+    gyz = result[12] << 8 | result[13];
+
+    tmp = tmp / 340 + 36;
+    acx = acx * 1000 / 16348;
+    acy = acy * 1000 / 16348;
+    acz = acz * 1000 / 16348;
+    gyx = gyx / 131;
+    gyy = gyy / 131;
+    gyz = gyz / 131;
+
 
     // hwlib::wait_ms(100);
     // hwlib::cout << "acx = " << acx << '\n';
     // hwlib::wait_ms(100);
     // hwlib::cout << "acy = " << acy << '\n';
     hwlib::wait_ms(100);
-    hwlib::cout << "acz = " << acz << '\n';
+    // hwlib::cout << "acz = " << acz << '\n';
     // hwlib::wait_ms(100);
     // hwlib::cout << "tmp = " << tmp << '\n';
     // hwlib::wait_ms(100);
