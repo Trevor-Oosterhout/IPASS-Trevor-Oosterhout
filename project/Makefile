@@ -9,10 +9,10 @@
 #############################################################################
 
 # source files in this project (main.cpp is automatically assumed)
-SOURCES := mpu6050.cpp
+SOURCES := mpu6050.cpp misc.cpp
 
 # header files in this project
-HEADERS := mpu6050.hpp
+HEADERS := mpu6050.hpp misc.hpp
 
 # other places to look for files for this project
 SEARCH  :=
