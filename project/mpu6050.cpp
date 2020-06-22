@@ -1,6 +1,5 @@
 #include "mpu6050.hpp"
 #include <array>
-#include "misc.hpp"
 #include "hwlib.hpp"
 
 
@@ -16,32 +15,32 @@ const unsigned int gyro_measurements_size  = 3;
 /// turns of sleep mode in register 107
 void mpu6050::disable_sleep_mode(){
   {
-    auto mpu = ((hwlib::i2c_bus*)&i2c)->write(adres);
-    mpu.write(0x6B);
-    mpu.write(0x00);
+    auto wtrans = ((hwlib::i2c_bus*)&i2c)->write(address);
+    wtrans.write(0x6B);
+    wtrans.write(0x00);
   }
 }
 
 
 /// \brief
-/// returns accel -x -y -z (signed) 16 bit integers in array in that order in milli m/s^2
+/// returns accel -x -y -z (signed) 16 bit integers in array in that order in milli gravitational acceleration
 /// \details
 /// this function returns the sensors acceleration measurements as (signed) 16 bit integers
 /// in an array in the order of x, y, z the return values should be interpeted
-/// as milli m/s^2
+/// as milli gravitational acceleration
 std::array<int16_t, accel_measurements_size> mpu6050::accel_measurements(){
   int16_t accel_x, accel_y, accel_z;
   uint8_t result [6];
-  int sensitivity = 2048 * exponent(2, accel_sensitivity);
+  int sensitivity = 16384 / exponent(2, accel_sensitivity);
 
 
   {
-    auto mpu = ((hwlib::i2c_bus*)&i2c)->write(adres);
-    mpu.write(0x3B);
+    auto wtrans = ((hwlib::i2c_bus*)&i2c)->write(address);
+    wtrans.write(0x3B);
   }
   {
-    auto mpu = ((hwlib::i2c_bus*)&i2c)->read(adres);
-    mpu.read(result, 6);
+    auto rtrans = ((hwlib::i2c_bus*)&i2c)->read(address);
+    rtrans.read(result, 6);
   }
   accel_x = result[0] << 8 | result[1];
   accel_y = result[2] << 8 | result[3];
@@ -66,12 +65,12 @@ int16_t mpu6050::temp_measurements(){
   int16_t temprature;
   uint8_t result [2];
   {
-    auto mpu = ((hwlib::i2c_bus*)&i2c)->write(adres);
-    mpu.write(0x41);
+    auto wtrans = ((hwlib::i2c_bus*)&i2c)->write(address);
+    wtrans.write(0x41);
   }
   {
-    auto mpu = ((hwlib::i2c_bus*)&i2c)->read(adres);
-    mpu.read(result, 2);
+    auto rtrans = ((hwlib::i2c_bus*)&i2c)->read(address);
+    rtrans.read(result, 2);
   }
   temprature = result[0] << 8 | result[1];
 
@@ -90,15 +89,15 @@ int16_t mpu6050::temp_measurements(){
 std::array<int16_t, gyro_measurements_size> mpu6050::gyro_measurements(){
   int16_t gyro_x, gyro_y, gyro_z;
   uint8_t result [6];
-  int sensitivity = 16.4 * exponent(2, gyro_sensitivity);
+  int sensitivity = 131 / exponent(2, gyro_sensitivity);
 
   {
-    auto mpu = ((hwlib::i2c_bus*)&i2c)->write(adres);
-    mpu.write(0x43);
+    auto wtrans = ((hwlib::i2c_bus*)&i2c)->write(address);
+    wtrans.write(0x43);
   }
   {
-    auto mpu = ((hwlib::i2c_bus*)&i2c)->read(adres);
-    mpu.read(result, 6);
+    auto rtrans = ((hwlib::i2c_bus*)&i2c)->read(address);
+    rtrans.read(result, 6);
   }
   gyro_x = result[0] << 8 | result[1];
   gyro_y = result[2] << 8 | result[3];
@@ -115,17 +114,78 @@ std::array<int16_t, gyro_measurements_size> mpu6050::gyro_measurements(){
 
 
 /// \brief
-///
+/// changes the mpu6050 gyro sensitivity (parameter 0-3)
 /// \details
-///
-void mpu6050::calibrate_accel_sensitivity(uint8_t range){
+/// changes the mpu6050 gyro sensitivity to one of 4 options (0, 1, 2, 3)
+void mpu6050::calibrate_gyro_sensitivity(uint8_t range){
   if(range < 4){
     gyro_sensitivity = range;
     range = range << 3;
     {
-      auto mpu = ((hwlib::i2c_bus*)&i2c)->write(adres);
-      mpu.write(0x1C);
-      mpu.write(range);
+      auto wtrans = ((hwlib::i2c_bus*)&i2c)->write(address);
+      wtrans.write(0x1B);
+      wtrans.write(range);
     }
   }
+}
+
+
+/// \brief
+/// changes the mpu6050 acceleration sensitivity (parameter 0-3)
+/// \details
+/// changes the mpu6050 acceleration sensitivity to one of 4 options (0, 1, 2, 3)
+void mpu6050::calibrate_accel_sensitivity(uint8_t range){
+  if(range < 4){
+    accel_sensitivity = range;
+    range = range << 3;
+    {
+      auto wtrans = ((hwlib::i2c_bus*)&i2c)->write(address);
+      wtrans.write(0x1C);
+      wtrans.write(range);
+    }
+  }
+}
+
+
+/// \brief
+/// exponent arithmetic function (not public)
+/// \details
+/// calculate (signed) integer to the power of an unsigned integer
+int mpu6050::exponent(int base, unsigned int power){
+  if(power > 0){
+    for(unsigned int i = 0; i < power; i++){
+      base = base * base;
+    }
+    return base;
+  }
+  else{
+    return 1;
+  }
+
+}
+
+
+/// \brief
+/// read given register
+/// \details
+/// read given register should register not exist it will return 0
+uint8_t mpu6050::read_register(const uint8_t read_address){
+  uint8_t result [1];
+  if(read_address < 0x75){
+    {
+      auto wtrans = ((hwlib::i2c_bus*)&i2c)->write(address);
+      wtrans.write(read_address);
+    }
+    {
+      auto rtrans = ((hwlib::i2c_bus*)&i2c)->read(address);
+      rtrans.read(result, 1);
+    }
+
+    return result[0];
+  }
+  else{
+    return 0;
+  }
+
+
 }

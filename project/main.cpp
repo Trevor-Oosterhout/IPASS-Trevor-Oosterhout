@@ -75,12 +75,14 @@ int main( void ){
     gyz = result[12] << 8 | result[13];
 
     tmp = tmp / 340 + 36;
-    acx = acx * 1000 / 16348;
-    acy = acy * 1000 / 16348;
-    acz = acz * 1000 / 16348;
+    acx = acx * 10 / 16348;
+    acy = acy * 10 / 16348;
+    acz = acz * 10 / 16348;
     gyx = gyx / 131;
     gyy = gyy / 131;
     gyz = gyz / 131;
+
+    // int16_t acc_all = (acx*acx + acy*acy + acz*acz);
 
 
     // hwlib::wait_ms(100);
@@ -88,8 +90,9 @@ int main( void ){
     // hwlib::wait_ms(100);
     // hwlib::cout << "acy = " << acy << '\n';
     hwlib::wait_ms(100);
-    // hwlib::cout << "acz = " << acz << '\n';
+    hwlib::cout << "acz = " << acz << '\n';
     // hwlib::wait_ms(100);
+    // hwlib::cout << "acc_all = " << acc_all << '\n';
     // hwlib::cout << "tmp = " << tmp << '\n';
     // hwlib::wait_ms(100);
     // hwlib::cout << "gyx = " << gyx << '\n';
