@@ -3,8 +3,6 @@
 #include "hwlib.hpp"
 
 
-/// @file
-
 const unsigned int accel_measurements_size = 3;
 const unsigned int gyro_measurements_size  = 3;
 
@@ -50,6 +48,7 @@ std::array<int16_t, accel_measurements_size> mpu6050::accel_measurements(){
   accel_y = accel_y * 1000 / sensitivity;
   accel_z = accel_z * 1000 / sensitivity;
 
+
   std::array<int16_t, accel_measurements_size> measurements = {accel_x, accel_y, accel_z};
 
   return measurements;
@@ -81,7 +80,7 @@ int16_t mpu6050::temp_measurements(){
 
 
 /// \brief
-/// returns accel -x -y -z (signed) 16 bit integers in array in that order in degrees/s
+/// returns gyro -x -y -z (signed) 16 bit integers in array in that order in degrees/s
 /// \details
 /// this function returns the sensors gyro measurements as (signed) 16 bit integers
 /// in an array in the order of x, y, z the return values should be interpeted
@@ -153,10 +152,11 @@ void mpu6050::calibrate_accel_sensitivity(uint8_t range){
 /// calculate (signed) integer to the power of an unsigned integer
 int mpu6050::exponent(int base, unsigned int power){
   if(power > 0){
-    for(unsigned int i = 0; i < power; i++){
-      base = base * base;
+    int result = base;
+    for(unsigned int i = 0; i < power - 1; i++){
+      result = result * base;
     }
-    return base;
+    return result;
   }
   else{
     return 1;

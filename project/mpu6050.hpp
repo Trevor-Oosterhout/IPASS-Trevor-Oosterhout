@@ -17,6 +17,11 @@ private:
   unsigned int accel_sensitivity;
   unsigned int gyro_sensitivity;
 
+
+  /// \brief
+  /// exponent arithmetic function
+  /// \details
+  /// calculate (signed) integer to the power of an unsigned integer
   int exponent(int base, unsigned int power);
 
 public:
@@ -32,19 +37,61 @@ public:
   gyro_sensitivity (0)
   {}
 
+
+  /// \brief
+  /// turns off sleep mode
+  /// \details
+  /// turns of sleep mode in register 107
   void disable_sleep_mode();
 
+
+  /// \brief
+  /// returns accel -x -y -z (signed) 16 bit integers in array in that order in milli gravitational acceleration
+  /// \details
+  /// this function returns the sensors acceleration measurements as (signed) 16 bit integers
+  /// in an array in the order of x, y, z the return values should be interpeted
+  /// as milli gravitational acceleration
   std::array<int16_t, 3> accel_measurements();
 
+
+  /// \brief
+  /// returns temprature as (signed) 16 bit integer in degrees Celsius
+  /// \details
+  /// this function returns the sensors temprature measurements as a (signed) 16 bit integer
+  /// the integer should be interpeted in degrees Celsius
   int16_t temp_measurements();
 
+
+  /// \brief
+  /// returns gyro -x -y -z (signed) 16 bit integers in array in that order in degrees/s
+  /// \details
+  /// this function returns the sensors gyro measurements as (signed) 16 bit integers
+  /// in an array in the order of x, y, z the return values should be interpeted
+  /// as degrees per second
   std::array<int16_t, 3> gyro_measurements();
 
+
+  /// \brief
+  /// changes the mpu6050 acceleration sensitivity (parameter 0-3)
+  /// \details
+  /// changes the mpu6050 acceleration sensitivity to one of 4 options (0, 1, 2, 3)
   void calibrate_accel_sensitivity(uint8_t range);
 
+
+
+  /// \brief
+  /// changes the mpu6050 gyro sensitivity (parameter 0-3)
+  /// \details
+  /// changes the mpu6050 gyro sensitivity to one of 4 options (0, 1, 2, 3)
   void calibrate_gyro_sensitivity(uint8_t range);
 
+
+  /// \brief
+  /// read given register
+  /// \details
+  /// read given register should register not exist it will return 0
   uint8_t read_register(const uint8_t read_address);
+
 
 
 };
