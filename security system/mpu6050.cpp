@@ -2,8 +2,6 @@
 #include <array>
 #include "hwlib.hpp"
 
-/// @file
-
 
 const unsigned int accel_measurements_size = 3;
 const unsigned int gyro_measurements_size  = 3;
@@ -42,10 +40,12 @@ std::array<int16_t, accel_measurements_size> mpu6050::accel_measurements(){
     auto rtrans = ((hwlib::i2c_bus*)&i2c)->read(address);
     rtrans.read(result, 6);
   }
+  // turn two 8bit registers into 16bit value
   accel_x = result[0] << 8 | result[1];
   accel_y = result[2] << 8 | result[3];
   accel_z = result[4] << 8 | result[5];
 
+  // turn raw value in to usable unit
   accel_x = accel_x * 1000 / sensitivity;
   accel_y = accel_y * 1000 / sensitivity;
   accel_z = accel_z * 1000 / sensitivity;
@@ -73,8 +73,10 @@ int16_t mpu6050::temp_measurements(){
     auto rtrans = ((hwlib::i2c_bus*)&i2c)->read(address);
     rtrans.read(result, 2);
   }
+  // turn two 8bit registers into 16bit value
   temprature = result[0] << 8 | result[1];
 
+  // turn raw value in to usable unit
   temprature = temprature / 340 + 37;
 
   return temprature;
@@ -100,10 +102,13 @@ std::array<int16_t, gyro_measurements_size> mpu6050::gyro_measurements(){
     auto rtrans = ((hwlib::i2c_bus*)&i2c)->read(address);
     rtrans.read(result, 6);
   }
+
+  // turn two 8bit registers into 16bit value
   gyro_x = result[0] << 8 | result[1];
   gyro_y = result[2] << 8 | result[3];
   gyro_z = result[4] << 8 | result[5];
 
+  // turn raw value in to usable unit
   gyro_x = gyro_x / sensitivity;
   gyro_y = gyro_y / sensitivity;
   gyro_z = gyro_z / sensitivity;

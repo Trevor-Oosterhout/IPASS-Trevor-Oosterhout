@@ -4,6 +4,8 @@
 
 /// @file
 
+// this file contains doxygen documentation
+
 /// \brief
 /// sensor mpu6050 class
 /// \details
@@ -99,8 +101,6 @@ public:
   /// calling this function will write a 1 to de DEVICE_RESET bit in the mpu6050
   /// will reset all registers to default value according to the datasheet
   void reset();
-
-
 
 };
 
