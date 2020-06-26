@@ -7,6 +7,8 @@
 
 const unsigned int accel_measurements_size = 3;
 const unsigned int gyro_measurements_size  = 3;
+int16_t gyro_x_d, gyro_y_d, gyro_z_d;
+float current_time, prev_time, elapsed_time;
 
 
 /// \brief
@@ -14,6 +16,7 @@ const unsigned int gyro_measurements_size  = 3;
 /// \details
 /// turns of sleep mode in register 107
 void mpu6050::disable_sleep_mode(){
+  current_time = hwlib::now_us();
   {
     auto wtrans = ((hwlib::i2c_bus*)&i2c)->write(address);
     wtrans.write(0x6B);
@@ -32,7 +35,6 @@ std::array<int16_t, accel_measurements_size> mpu6050::accel_measurements(){
   int16_t accel_x, accel_y, accel_z;
   uint8_t result [6];
   int sensitivity = 16384 / exponent(2, accel_sensitivity);
-
 
   {
     auto wtrans = ((hwlib::i2c_bus*)&i2c)->write(address);
@@ -91,6 +93,9 @@ std::array<int16_t, gyro_measurements_size> mpu6050::gyro_measurements(){
   int16_t gyro_x, gyro_y, gyro_z;
   uint8_t result [6];
   int sensitivity = 131 / exponent(2, gyro_sensitivity);
+  prev_time = current_time;
+  current_time = hwlib::now_us();
+  elapsed_time = (current_time - prev_time) / 1000000;
 
   {
     auto wtrans = ((hwlib::i2c_bus*)&i2c)->write(address);
@@ -107,6 +112,16 @@ std::array<int16_t, gyro_measurements_size> mpu6050::gyro_measurements(){
   gyro_x = gyro_x / sensitivity;
   gyro_y = gyro_y / sensitivity;
   gyro_z = gyro_z / sensitivity;
+
+  gyro_x_d = gyro_x_d + gyro_x * elapsed_time;
+  gyro_y_d = gyro_y_d + gyro_y * elapsed_time;
+  gyro_z_d = gyro_z_d + gyro_z * elapsed_time;
+
+
+  hwlib::cout << "gyro_x = " << gyro_x_d << "      |";
+  hwlib::cout << "gyro_y = " << gyro_y_d << "      |";
+  hwlib::cout << "gyro_z = " << gyro_z_d << "\n";
+
 
   std::array<int16_t, gyro_measurements_size> measurements = {gyro_x, gyro_y, gyro_z};
 

@@ -42,6 +42,32 @@ public:
   {}
 
 
+  /// \brief
+  ///
+  /// \details
+  ///
+  void setup();
+
+
+  /// \brief
+  ///
+  /// \details
+  ///
+  void reset();
+
+
+  /// \brief
+  ///
+  /// \details
+  ///
+  bool detect();
+
+  /// \brief
+  ///
+  /// \details
+  ///
+  void triggerd();
+
 
 };
 

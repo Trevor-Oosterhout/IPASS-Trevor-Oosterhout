@@ -13,24 +13,17 @@ int main( void ){
 
   sensor.disable_sleep_mode();
 
-  int16_t temp;
-  std::array<int16_t, 3> accel;
+  std::array<int16_t, 3> mea;
 
-  sensor.calibrate_accel_sensitivity(3);
 
   for(;;){
-    temp = sensor.temp_measurements();
-    accel = sensor.accel_measurements();
-    hwlib::wait_ms(200);
-    hwlib::cout << "temp = " << temp << "   |";
-    hwlib::wait_ms(200);
-    hwlib::cout << "acx = " << accel[0] << "   |";
-    hwlib::wait_ms(200);
-    hwlib::cout << "acy = " << accel[1] << "   |";
-    hwlib::wait_ms(200);
-    hwlib::cout << "acz = " << accel[2] << '\n';
-
+    hwlib::wait_ms(50);
+    mea = sensor.gyro_measurements();
   }
+
+
+
+
 
 
  //  uint8_t x = 2;

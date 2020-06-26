@@ -10,10 +10,10 @@ int main( void ){
 
   auto i2c = hwlib::i2c_bus_bit_banged_scl_sda( scl,sda );
 
-  auto keypadrow_0 = due::pin_oc(1, 25);
-  auto keypadrow_1 = due::pin_oc(2, 28);
-  auto keypadrow_2 = due::pin_oc(2, 26);
-  auto keypadrow_3 = due::pin_oc(2, 25);
+  auto keypadrow_0 = hwlib::target::pin_oc(1, 25);
+  auto keypadrow_1 = hwlib::target::pin_oc(2, 28);
+  auto keypadrow_2 = hwlib::target::pin_oc(2, 26);
+  auto keypadrow_3 = hwlib::target::pin_oc(2, 25);
 
   auto keypadrcol_0 = hwlib::target::pin_in(2, 24);
   auto keypadrcol_1 = hwlib::target::pin_in(2, 23);
@@ -32,8 +32,14 @@ int main( void ){
   auto green_led = hwlib::target::pin_out(3, 8);
   mpu6050 sensor(0x68, i2c);
   auto display = hwlib::glcd_oled(i2c, 0x3C);
+  std::array<char, 4> password = {'9', '2', '9', '2'};
 
+  security s(sensor, speaker, red_led, green_led, keypad, display, password);
 
+  s.setup();
+  // s.reset();
+  while(!s.detect()){}
+  hwlib::cout << "DONE";
 
 }
 

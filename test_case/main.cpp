@@ -48,7 +48,7 @@ void test_reset(hwlib::i2c_bus_bit_banged_scl_sda & i2c){
 
 
 // note the mpu6050 needs to be face up on a flat surface for this test
-void test_acceleration_1(hwlib::i2c_bus_bit_banged_scl_sda & i2c){
+void test_acceleration(hwlib::i2c_bus_bit_banged_scl_sda & i2c){
   mpu6050 sensor(0x68, i2c);
   sensor.disable_sleep_mode();
   std::array<int16_t, 3> a;
@@ -57,10 +57,10 @@ void test_acceleration_1(hwlib::i2c_bus_bit_banged_scl_sda & i2c){
     hwlib::wait_ms(50);
   }
   if( ((a[0] < -20) && (a[0] > -100)) && ((a[1] < -5) && (a[1] > -50)) && ((a[2] < 960) && (a[2] > 910))){
-    hwlib::cout << "TEST CASE ACCELERATION_1 IS SUCCESSFUL" << '\n' << '\n';
+    hwlib::cout << "TEST CASE ACCELERATION IS SUCCESSFUL" << '\n' << '\n';
   }
   else{
-    hwlib::cout << "TEST CASE ACCELERATION_1 HAS FAILED" << '\n' << '\n';
+    hwlib::cout << "TEST CASE ACCELERATION HAS FAILED" << '\n' << '\n';
   }
 }
 
@@ -161,7 +161,7 @@ int main (void){
 
   test_reset(i2c);
 
-  test_acceleration_1(i2c);
+  test_acceleration(i2c);
 
   test_temprature(i2c);
 
