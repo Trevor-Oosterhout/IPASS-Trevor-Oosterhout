@@ -26,7 +26,7 @@ void mpu6050::disable_sleep_mode(){
 /// this function returns the sensors acceleration measurements as (signed) 16 bit integers
 /// in an array in the order of x, y, z the return values should be interpeted
 /// as milli gravitational acceleration
-std::array<int16_t, accel_measurements_size> mpu6050::accel_measurements(){
+void mpu6050::accel_measurements(std::array<int16_t, accel_measurements_size> & measurements){
   int16_t accel_x, accel_y, accel_z;
   uint8_t result [6];
   int sensitivity = 16384 / exponent(2, accel_sensitivity);
@@ -36,24 +36,22 @@ std::array<int16_t, accel_measurements_size> mpu6050::accel_measurements(){
     auto wtrans = ((hwlib::i2c_bus*)&i2c)->write(address);
     wtrans.write(0x3B);
   }
+  hwlib::wait_ms(6);
   {
     auto rtrans = ((hwlib::i2c_bus*)&i2c)->read(address);
     rtrans.read(result, 6);
   }
-  // turn two 8bit registers into 16bit value
   accel_x = result[0] << 8 | result[1];
   accel_y = result[2] << 8 | result[3];
   accel_z = result[4] << 8 | result[5];
 
-  // turn raw value in to usable unit
   accel_x = accel_x * 1000 / sensitivity;
   accel_y = accel_y * 1000 / sensitivity;
   accel_z = accel_z * 1000 / sensitivity;
 
 
-  std::array<int16_t, accel_measurements_size> measurements = {accel_x, accel_y, accel_z};
+  measurements = {accel_x, accel_y, accel_z};
 
-  return measurements;
 }
 
 
@@ -69,14 +67,13 @@ int16_t mpu6050::temp_measurements(){
     auto wtrans = ((hwlib::i2c_bus*)&i2c)->write(address);
     wtrans.write(0x41);
   }
+  hwlib::wait_ms(6);
   {
     auto rtrans = ((hwlib::i2c_bus*)&i2c)->read(address);
     rtrans.read(result, 2);
   }
-  // turn two 8bit registers into 16bit value
   temprature = result[0] << 8 | result[1];
 
-  // turn raw value in to usable unit
   temprature = temprature / 340 + 37;
 
   return temprature;
@@ -89,7 +86,7 @@ int16_t mpu6050::temp_measurements(){
 /// this function returns the sensors gyro measurements as (signed) 16 bit integers
 /// in an array in the order of x, y, z the return values should be interpeted
 /// as degrees per second
-std::array<int16_t, gyro_measurements_size> mpu6050::gyro_measurements(){
+void mpu6050::gyro_measurements(std::array<int16_t, gyro_measurements_size> & measurements){
   int16_t gyro_x, gyro_y, gyro_z;
   uint8_t result [6];
   int sensitivity = 131 / exponent(2, gyro_sensitivity);
@@ -98,24 +95,21 @@ std::array<int16_t, gyro_measurements_size> mpu6050::gyro_measurements(){
     auto wtrans = ((hwlib::i2c_bus*)&i2c)->write(address);
     wtrans.write(0x43);
   }
+  hwlib::wait_ms(6);
   {
     auto rtrans = ((hwlib::i2c_bus*)&i2c)->read(address);
     rtrans.read(result, 6);
   }
-
-  // turn two 8bit registers into 16bit value
   gyro_x = result[0] << 8 | result[1];
   gyro_y = result[2] << 8 | result[3];
   gyro_z = result[4] << 8 | result[5];
 
-  // turn raw value in to usable unit
   gyro_x = gyro_x / sensitivity;
   gyro_y = gyro_y / sensitivity;
   gyro_z = gyro_z / sensitivity;
 
-  std::array<int16_t, gyro_measurements_size> measurements = {gyro_x, gyro_y, gyro_z};
+  measurements = {gyro_x, gyro_y, gyro_z};
 
-  return measurements;
 }
 
 
@@ -126,7 +120,7 @@ std::array<int16_t, gyro_measurements_size> mpu6050::gyro_measurements(){
 void mpu6050::calibrate_gyro_sensitivity(uint8_t range){
   if(range < 4){
     gyro_sensitivity = range;
-    range = range << 3; 
+    range = range << 3;
     {
       auto wtrans = ((hwlib::i2c_bus*)&i2c)->write(address);
       wtrans.write(0x1B);

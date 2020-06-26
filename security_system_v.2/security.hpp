@@ -75,6 +75,11 @@ public:
   ///
   void input_password();
 
+
+  /// \brief
+  ///
+  /// \details
+  ///
   void activate();
 
 };

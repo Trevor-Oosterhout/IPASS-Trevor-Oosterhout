@@ -52,15 +52,12 @@ void test_acceleration(hwlib::i2c_bus_bit_banged_scl_sda & i2c){
   mpu6050 sensor(0x68, i2c);
   sensor.disable_sleep_mode();
   std::array<int16_t, 3> a;
-  for(unsigned int i = 0; i < 10; i++){
-    a = sensor.accel_measurements();
-    hwlib::wait_ms(50);
-  }
+  sensor.accel_measurements(a);
   if( ((a[0] < -20) && (a[0] > -100)) && ((a[1] < -5) && (a[1] > -50)) && ((a[2] < 960) && (a[2] > 910))){
-    hwlib::cout << "TEST CASE ACCELERATION IS SUCCESSFUL" << '\n' << '\n';
+    hwlib::cout << "TEST CASE ACCELERATION MEASUREMENTS IS SUCCESSFUL" << '\n' << '\n';
   }
   else{
-    hwlib::cout << "TEST CASE ACCELERATION HAS FAILED" << '\n' << '\n';
+    hwlib::cout << "TEST CASE ACCELERATION MEASUREMENTS HAS FAILED" << '\n' << '\n';
   }
 }
 
@@ -71,10 +68,10 @@ void test_temprature(hwlib::i2c_bus_bit_banged_scl_sda & i2c){
   sensor.disable_sleep_mode();
   int16_t a = sensor.temp_measurements();
   if(a > 20 && a < 35){
-    hwlib::cout << "TEST CASE TEMPRATURE IS SUCCESSFUL" << '\n' << '\n';
+    hwlib::cout << "TEST CASE TEMPRATURE MEASUREMENTS IS SUCCESSFUL" << '\n' << '\n';
   }
   else{
-    hwlib::cout << "TEST CASE TEMPRATURE HAS FAILED" << '\n' << '\n';
+    hwlib::cout << "TEST CASE TEMPRATURE HAS MEASUREMENTS FAILED" << '\n' << '\n';
   }
 }
 
@@ -84,12 +81,12 @@ void test_gyro_1(hwlib::i2c_bus_bit_banged_scl_sda & i2c){
   mpu6050 sensor(0x68, i2c);
   sensor.disable_sleep_mode();
   std::array<int16_t, 3> a;
-  a = sensor.gyro_measurements();
+  sensor.gyro_measurements(a);
   if( ((a[0] < 5) && (a[0] > -5)) && ((a[1] < 5) && (a[1] > -5)) && ((a[2] < 5) && (a[2] > -5))){
-    hwlib::cout << "TEST CASE GYRO IS SUCCESSFUL" << '\n' << '\n';
+    hwlib::cout << "TEST CASE GYRO MEASUREMENTS IS SUCCESSFUL" << '\n' << '\n';
   }
   else{
-    hwlib::cout << "TEST CASE GYRO HAS FAILED" << '\n' << '\n';
+    hwlib::cout << "TEST CASE GYRO MEASUREMENTS HAS FAILED" << '\n' << '\n';
   }
 }
 
@@ -119,10 +116,7 @@ void test_accel_calibrated_measurements(hwlib::i2c_bus_bit_banged_scl_sda & i2c)
   sensor.disable_sleep_mode();
   sensor.calibrate_accel_sensitivity(3);
   std::array<int16_t, 3> a;
-  for(unsigned int i = 0; i < 10; i++){
-    a = sensor.accel_measurements();
-    hwlib::wait_ms(50);
-  }
+  sensor.accel_measurements(a);
   if( ((a[0] < -20) && (a[0] > -100)) && ((a[1] < -5) && (a[1] > -50)) && ((a[2] < 960) && (a[2] > 910))){
     hwlib::cout << "TEST CASE CALIBRATED ACCELERATION MEASUREMENTS IS SUCCESSFUL" << '\n' << '\n';
   }
@@ -138,7 +132,7 @@ void test_gyro_calibrated_measurements(hwlib::i2c_bus_bit_banged_scl_sda & i2c){
   sensor.disable_sleep_mode();
   sensor.calibrate_gyro_sensitivity(3);
   std::array<int16_t, 3> a;
-  a = sensor.gyro_measurements();
+  sensor.gyro_measurements(a);
   if( ((a[0] < 5) && (a[0] > -5)) && ((a[1] < 5) && (a[1] > -5)) && ((a[2] < 5) && (a[2] > -5))){
     hwlib::cout << "TEST CASE CALIBRATED GYRO IS SUCCESSFUL" << '\n' << '\n';
   }

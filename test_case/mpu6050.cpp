@@ -26,7 +26,7 @@ void mpu6050::disable_sleep_mode(){
 /// this function returns the sensors acceleration measurements as (signed) 16 bit integers
 /// in an array in the order of x, y, z the return values should be interpeted
 /// as milli gravitational acceleration
-std::array<int16_t, accel_measurements_size> mpu6050::accel_measurements(){
+void mpu6050::accel_measurements(std::array<int16_t, accel_measurements_size> & measurements){
   int16_t accel_x, accel_y, accel_z;
   uint8_t result [6];
   int sensitivity = 16384 / exponent(2, accel_sensitivity);
@@ -36,6 +36,7 @@ std::array<int16_t, accel_measurements_size> mpu6050::accel_measurements(){
     auto wtrans = ((hwlib::i2c_bus*)&i2c)->write(address);
     wtrans.write(0x3B);
   }
+  hwlib::wait_ms(6);
   {
     auto rtrans = ((hwlib::i2c_bus*)&i2c)->read(address);
     rtrans.read(result, 6);
@@ -49,9 +50,8 @@ std::array<int16_t, accel_measurements_size> mpu6050::accel_measurements(){
   accel_z = accel_z * 1000 / sensitivity;
 
 
-  std::array<int16_t, accel_measurements_size> measurements = {accel_x, accel_y, accel_z};
+  measurements = {accel_x, accel_y, accel_z};
 
-  return measurements;
 }
 
 
@@ -85,7 +85,7 @@ int16_t mpu6050::temp_measurements(){
 /// this function returns the sensors gyro measurements as (signed) 16 bit integers
 /// in an array in the order of x, y, z the return values should be interpeted
 /// as degrees per second
-std::array<int16_t, gyro_measurements_size> mpu6050::gyro_measurements(){
+void mpu6050::gyro_measurements(std::array<int16_t, gyro_measurements_size> & measurements){
   int16_t gyro_x, gyro_y, gyro_z;
   uint8_t result [6];
   int sensitivity = 131 / exponent(2, gyro_sensitivity);
@@ -106,9 +106,8 @@ std::array<int16_t, gyro_measurements_size> mpu6050::gyro_measurements(){
   gyro_y = gyro_y / sensitivity;
   gyro_z = gyro_z / sensitivity;
 
-  std::array<int16_t, gyro_measurements_size> measurements = {gyro_x, gyro_y, gyro_z};
+  measurements = {gyro_x, gyro_y, gyro_z};
 
-  return measurements;
 }
 
 

@@ -36,11 +36,9 @@ int main( void ){
 
   security s(sensor, speaker, red_led, green_led, keypad, display, password);
 
-  s.setup();
-  // s.reset();
-  while(!s.detect()){}
-  hwlib::cout << "DONE";
-
+  for(;;){
+  s.detect();
+}
 }
 
   // mpu6050 sensor(0x68, i2c);
