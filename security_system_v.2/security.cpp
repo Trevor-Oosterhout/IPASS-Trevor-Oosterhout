@@ -11,7 +11,6 @@ void security::reset(){
   display.clear();
   display.flush();
   sensor.reset();
-  hwlib::wait_ms(20);
 }
 
 
@@ -24,7 +23,7 @@ void security::setup(){
 bool security::detect(){
   std::array<int16_t, 3> g_measurements;
   sensor.accel_measurements(g_measurements);
-  if((g_measurements[2] < 900 || g_measurements[2] > 960)){
+  if((g_measurements[2] < 500 || g_measurements[2] > 1300)){
       return true;
     }
   else{
@@ -32,11 +31,13 @@ bool security::detect(){
   }
 }
 
+
 void security::triggerd(){
   red_led.write(1);
   green_led.write(0);
   speaker.write(1);
 }
+
 
 void security::input_password(){
   std::array<char, 4> input;
@@ -47,13 +48,14 @@ void security::input_password(){
   while(input != password){
     index = 0;
     terminal << '\f';
-    terminal << "PASSWORD" << '\n' << "::" << hwlib::flush;
+    terminal << "PASSWORD" << '\n' << "$ " << hwlib::flush;
     while(index != 4){
         buffer = keypad.pressed();
         if(buffer != '\0'){
           terminal << buffer << hwlib::flush;
           input[index] = buffer;
           index++;
+          hwlib::wait_ms(100);
         }
     }
     if(input == password){
@@ -66,6 +68,7 @@ void security::input_password(){
     }
   }
 }
+
 
 void security::activate(){
   for(;;){

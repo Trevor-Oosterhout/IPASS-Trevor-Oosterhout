@@ -15,7 +15,7 @@ SOURCES := mpu6050.cpp security.cpp
 HEADERS := mpu6050.hpp security.hpp
 
 # other places to look for files for this project
-SEARCH  :=
+SEARCH  := ../MPU6050
 
 # set RELATIVE to the next higher directory
 # and defer to the appropriate Makefile.* there

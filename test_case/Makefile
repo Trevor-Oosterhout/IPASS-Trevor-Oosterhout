@@ -15,7 +15,7 @@ SOURCES := mpu6050.cpp
 HEADERS := mpu6050.hpp
 
 # other places to look for files for this project
-SEARCH  :=
+SEARCH  := ../MPU6050
 
 # set RELATIVE to the next higher directory
 # and defer to the appropriate Makefile.* there
