@@ -1,7 +1,4 @@
 #include "security.hpp"
-#include "hwlib.hpp"
-#include "mpu6050.hpp"
-#include <array>
 
 
 void security::reset(){
@@ -20,10 +17,9 @@ void security::setup(){
 }
 
 
-bool security::detect(){
-  std::array<int16_t, 3> g_measurements;
-  sensor.accel_measurements(g_measurements);
-  if((g_measurements[2] < 500 || g_measurements[2] > 1300)){
+bool security::detect(std::array<int16_t, 3> & accel_measurements){
+  sensor.accel_measurements(accel_measurements);
+  if((accel_measurements[2] < 500 || accel_measurements[2] > 1300)){
       return true;
     }
   else{
@@ -58,12 +54,13 @@ void security::input_password(){
           hwlib::wait_ms(100);
         }
     }
+    terminal << '\f' << "PASSWORD" << '\n';
     if(input == password){
-      terminal << '\f' << "PASSWORD" << '\n' << "VALID" << hwlib::flush;
+      terminal << "VALID" << hwlib::flush;
       hwlib::wait_ms(2000);
     }
     else{
-      terminal << '\f' << "PASSWORD" << '\n' << "INVALID" << hwlib::flush;
+      terminal << "INVALID" << hwlib::flush;
       hwlib::wait_ms(2000);
     }
   }
@@ -74,7 +71,8 @@ void security::activate(){
   for(;;){
     reset();
     setup();
-    while (!detect()){}
+    std::array<int16_t, 3> accel_measurements;
+    while (!detect(accel_measurements)){}
     triggerd();
     input_password();
   }

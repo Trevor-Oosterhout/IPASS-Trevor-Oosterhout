@@ -68,6 +68,7 @@ void mpu6050::gyro_measurements(std::array<int16_t, gyro_measurements_size> & me
   uint8_t result [6];
   int sensitivity = 131 / exponent(2, gyro_sensitivity);
 
+
   {
     auto wtrans = ((hwlib::i2c_bus*)&i2c)->write(address);
     wtrans.write(0x43);
@@ -84,6 +85,7 @@ void mpu6050::gyro_measurements(std::array<int16_t, gyro_measurements_size> & me
   gyro_x = gyro_x / sensitivity;
   gyro_y = gyro_y / sensitivity;
   gyro_z = gyro_z / sensitivity;
+
 
   measurements = {gyro_x, gyro_y, gyro_z};
 
@@ -154,11 +156,82 @@ uint8_t mpu6050::read_register(const uint8_t read_address){
 }
 
 
+unsigned int mpu6050::who_am_i(){
+  uint8_t result [1];
+    {
+      auto wtrans = ((hwlib::i2c_bus*)&i2c)->write(address);
+      wtrans.write(0x75);
+    }
+    hwlib::wait_ms(6);
+    {
+      auto rtrans = ((hwlib::i2c_bus*)&i2c)->read(address);
+      rtrans.read(result, 1);
+    }
+    return result[0];
+}
+
+
 void mpu6050::reset(){
   {
     auto wtrans = ((hwlib::i2c_bus*)&i2c)->write(address);
     wtrans.write(0x6B);
     wtrans.write(0x80);
   }
+  accel_sensitivity = 0;
+  gyro_sensitivity = 0;
   hwlib::wait_ms(6);
 }
+
+
+unsigned int mpu6050::get_accelleration_sensitivity(){
+  return accel_sensitivity;
+}
+
+
+unsigned int mpu6050::get_gyro_sensitivity(){
+  return gyro_sensitivity;
+}
+
+
+// int past_time, present_time, passed_time;
+//
+//
+// void mpu6050::gyro_in_degrees(std::array<float, gyro_measurements_size> & angles){
+//   int16_t gyro_x, gyro_y, gyro_z;
+//   uint8_t result [6];
+//   int sensitivity = 131 / exponent(2, gyro_sensitivity);
+//   past_time = present_time;
+//   present_time = hwlib::now_us();
+//   passed_time = present_time - past_time;
+//
+//   float seconds = passed_time / 1000000;
+//
+//   {
+//     auto wtrans = ((hwlib::i2c_bus*)&i2c)->write(address);
+//     wtrans.write(0x43);
+//   }
+//   hwlib::wait_ms(6);
+//   {
+//     auto rtrans = ((hwlib::i2c_bus*)&i2c)->read(address);
+//     rtrans.read(result, 6);
+//   }
+//   gyro_x = result[0] << 8 | result[1];
+//   gyro_y = result[2] << 8 | result[3];
+//   gyro_z = result[4] << 8 | result[5];
+//
+//   gyro_x = gyro_x / sensitivity;
+//   gyro_y = gyro_y / sensitivity;
+//   gyro_z = gyro_z / sensitivity;
+//
+//   float angle_x = gyro_x * seconds;
+//   float angle_y = gyro_y * seconds;
+//   float angle_z = gyro_y * seconds;
+//
+//   angle_x = angles[0] + angle_x;
+//   angle_y = angles[1] + angle_y;
+//   angle_z = angles[2] + angle_z;
+//
+//
+//
+//   angles = {angle_x, angle_y, angle_z};
+// }

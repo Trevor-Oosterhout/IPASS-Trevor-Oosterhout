@@ -14,11 +14,6 @@
 /// \details
 ///
 
-/// \brief
-///
-/// \details
-///
-
 class security{
 private:
   mpu6050 & sensor;
@@ -60,7 +55,7 @@ public:
   ///
   /// \details
   ///
-  bool detect();
+  bool detect(std::array<int16_t, 3> & accel_measurements);
 
   /// \brief
   ///

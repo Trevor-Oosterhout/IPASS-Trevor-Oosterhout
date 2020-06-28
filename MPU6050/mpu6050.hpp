@@ -105,6 +105,38 @@ public:
   /// will reset all registers to default value according to the datasheet
   void reset();
 
+
+  /// \brief
+  /// returns devices ID
+  /// \details
+  /// calling this function will give the identity of the device
+  unsigned int who_am_i();
+
+
+  /// \brief
+  /// returns acceleration sensitivity
+  /// \details
+  /// calling this function will give the current acceleration sensitivity
+  unsigned int get_accelleration_sensitivity();
+
+
+  /// \brief
+  /// returns devices gyro sensitivity
+  /// \details
+  /// calling this function will give the current gyro sensitivity
+  unsigned int get_gyro_sensitivity();
+
+
+  // \brief
+  // reads gyro -x -y -z in that order in degrees to measurements<>
+  // \details
+  // this function reads the sensors gyro measurements as float
+  // in an array in the order of x, y, z the values should be interpeted
+  // as degree
+  // note: this functions in currently non functional. I could not test this properly
+  // void mpu6050::gyro_in_degrees(std::array<float, gyro_measurements_size> & angles){
+
+
 };
 
 

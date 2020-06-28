@@ -1,4 +1,4 @@
-#include "catch.hpp"
+// #include "catch.hpp"
 #include "hwlib.hpp"
 #include "mpu6050.hpp"
 #include <array>
@@ -7,6 +7,20 @@
 // conditions: the mpu6050 just powererd on and nothing has been written to the mpu6050
 // the AD0 pin is LOW and the mpu is face up and standing still on a flat surface
 // addional conditions are in commentary above the test
+
+
+void test_who_am_i(hwlib::i2c_bus_bit_banged_scl_sda & i2c){
+  mpu6050 sensor(0x68, i2c);
+  unsigned int ID = sensor.who_am_i();
+  if(ID == 0x68){
+    hwlib::cout << "TEST CASE WHO_AM_I IS SUCCESSFUL" << '\n' << '\n';
+  }
+  else{
+    hwlib::cout << "TEST CASE WHO_AM_I HAS FAILED" << '\n' << '\n';
+  }
+}
+
+
 void test_read_register(hwlib::i2c_bus_bit_banged_scl_sda & i2c){
   mpu6050 sensor(0x68, i2c);
   uint8_t a = sensor.read_register(0x6b);
@@ -143,17 +157,20 @@ void test_gyro_calibrated_measurements(hwlib::i2c_bus_bit_banged_scl_sda & i2c){
 
 
 
+
 int main (void){
   auto scl = hwlib::target::pin_oc( hwlib::target::pins::scl );
   auto sda = hwlib::target::pin_oc( hwlib::target::pins::sda );
 
   auto i2c = hwlib::i2c_bus_bit_banged_scl_sda( scl,sda );
 
+  test_reset(i2c);
+
   test_read_register(i2c);
 
-  test_disable_sleep_mode(i2c);
+  test_who_am_i(i2c);
 
-  test_reset(i2c);
+  test_disable_sleep_mode(i2c);
 
   test_acceleration(i2c);
 
