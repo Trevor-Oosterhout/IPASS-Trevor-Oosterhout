@@ -92,6 +92,138 @@ void mpu6050::gyro_measurements(std::array<int16_t, gyro_measurements_size> & me
 }
 
 
+int16_t mpu6050::accel_x_measurement(){
+  int16_t accel_x;
+  uint8_t result [2];
+  int sensitivity = 16384 / exponent(2, accel_sensitivity);
+
+  {
+    auto wtrans = ((hwlib::i2c_bus*)&i2c)->write(address);
+    wtrans.write(0x3B);
+  }
+  hwlib::wait_ms(6);
+  {
+    auto rtrans = ((hwlib::i2c_bus*)&i2c)->read(address);
+    rtrans.read(result, 2);
+  }
+  accel_x = result[0] << 8 | result[1];
+
+  accel_x = accel_x * 1000 / sensitivity;
+
+  return accel_x;
+}
+
+
+int16_t mpu6050::accel_y_measurement(){
+  int16_t accel_y;
+  uint8_t result [2];
+  int sensitivity = 16384 / exponent(2, accel_sensitivity);
+
+  {
+    auto wtrans = ((hwlib::i2c_bus*)&i2c)->write(address);
+    wtrans.write(0x3D);
+  }
+  hwlib::wait_ms(6);
+  {
+    auto rtrans = ((hwlib::i2c_bus*)&i2c)->read(address);
+    rtrans.read(result, 2);
+  }
+  accel_y = result[0] << 8 | result[1];
+
+  accel_y = accel_y * 1000 / sensitivity;
+
+  return accel_y;
+}
+
+
+int16_t mpu6050::accel_z_measurement(){
+  int16_t accel_z;
+  uint8_t result [2];
+  int sensitivity = 16384 / exponent(2, accel_sensitivity);
+
+  {
+    auto wtrans = ((hwlib::i2c_bus*)&i2c)->write(address);
+    wtrans.write(0x3F);
+  }
+  hwlib::wait_ms(6);
+  {
+    auto rtrans = ((hwlib::i2c_bus*)&i2c)->read(address);
+    rtrans.read(result, 2);
+  }
+  accel_z = result[0] << 8 | result[1];
+
+  accel_z = accel_z * 1000 / sensitivity;
+
+  return accel_z;
+}
+
+
+int16_t mpu6050::gyro_x_measurement(){
+  int16_t gyro_x;
+  uint8_t result [2];
+  int sensitivity = 131 / exponent(2, gyro_sensitivity);
+
+  {
+    auto wtrans = ((hwlib::i2c_bus*)&i2c)->write(address);
+    wtrans.write(0x43);
+  }
+  hwlib::wait_ms(6);
+  {
+    auto rtrans = ((hwlib::i2c_bus*)&i2c)->read(address);
+    rtrans.read(result, 2);
+  }
+  gyro_x = result[0] << 8 | result[1];
+
+  gyro_x = gyro_x / sensitivity;
+
+  return gyro_x;
+}
+
+
+int16_t mpu6050::gyro_y_measurement(){
+  int16_t gyro_y;
+  uint8_t result [2];
+  int sensitivity = 131 / exponent(2, gyro_sensitivity);
+
+  {
+    auto wtrans = ((hwlib::i2c_bus*)&i2c)->write(address);
+    wtrans.write(0x45);
+  }
+  hwlib::wait_ms(6);
+  {
+    auto rtrans = ((hwlib::i2c_bus*)&i2c)->read(address);
+    rtrans.read(result, 2);
+  }
+  gyro_y = result[0] << 8 | result[1];
+
+  gyro_y = gyro_y / sensitivity;
+
+  return gyro_y;
+}
+
+
+int16_t mpu6050::gyro_z_measurement(){
+  int16_t gyro_z;
+  uint8_t result [2];
+  int sensitivity = 131 / exponent(2, gyro_sensitivity);
+
+  {
+    auto wtrans = ((hwlib::i2c_bus*)&i2c)->write(address);
+    wtrans.write(0x47);
+  }
+  hwlib::wait_ms(6);
+  {
+    auto rtrans = ((hwlib::i2c_bus*)&i2c)->read(address);
+    rtrans.read(result, 2);
+  }
+  gyro_z = result[0] << 8 | result[1];
+
+  gyro_z = gyro_z / sensitivity;
+
+  return gyro_z;
+}
+
+
 void mpu6050::calibrate_gyro_sensitivity(uint8_t range){
   if(range < 4){
     gyro_sensitivity = range;

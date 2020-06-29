@@ -74,6 +74,55 @@ public:
 
 
   /// \brief
+  /// returns x acceleration as (signed) 16 bit integer in milli gravitational acceleration
+  /// \details
+  /// this function returns the sensors acceleration x measurements as a (signed) 16 bit integer
+  /// the value should be interpeted in milli gravitational acceleration
+  int16_t accel_x_measurement();
+
+
+  /// \brief
+  /// returns y acceleration as (signed) 16 bit integer in milli gravitational acceleration
+  /// \details
+  /// this function returns the sensors acceleration y measurements as a (signed) 16 bit integer
+  /// the value should be interpeted in milli gravitational acceleration
+  int16_t accel_y_measurement();
+
+
+  /// \brief
+  /// returns z acceleration as (signed) 16 bit integer in milli gravitational acceleration
+  /// \details
+  /// this function returns the sensors acceleration z measurements as a (signed) 16 bit integer
+  /// the value should be interpeted in milli gravitational acceleration
+  int16_t accel_z_measurement();
+
+
+  /// \brief
+  /// returns x gyro as (signed) 16 bit integer in degrees/s
+  /// \details
+  /// this function returns the sensors gyro x measurements as a (signed) 16 bit integer
+  /// the value should be interpeted in degrees per second
+  int16_t gyro_x_measurement();
+
+
+  /// \brief
+  /// returns y gyro as (signed) 16 bit integer in degrees/s
+  /// \details
+  /// this function returns the sensors gyro y measurements as a (signed) 16 bit integer
+  /// the value should be interpeted in degrees per second
+  int16_t gyro_y_measurement();
+
+
+  /// \brief
+  /// returns z gyro as (signed) 16 bit integer in degrees/s
+  /// \details
+  /// this function returns the sensors gyro z measurements as a (signed) 16 bit integer
+  /// the value should be interpeted in degrees per second
+  int16_t gyro_z_measurement();
+
+
+
+  /// \brief
   /// changes the mpu6050 acceleration sensitivity to range [0-3]
   /// \details
   /// changes the mpu6050 acceleration sensitivity to one of 4 options (0, 1, 2, 3)

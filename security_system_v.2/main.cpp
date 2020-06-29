@@ -25,17 +25,19 @@ int main( void ){
 
   auto keypad_matrix = hwlib::matrix_of_switches(keyrows, keycolums);
 
+  auto display = hwlib::glcd_oled(i2c, 0x3C);
+  auto font = hwlib::font_default_16x16();
 
+  auto terminal = hwlib::terminal_from(display, font);
   auto keypad = hwlib::keypad< 16 >(keypad_matrix, "D#0*C987B654A321");
   auto speaker = hwlib::target::pin_out(0, 28);
   auto red_led = hwlib::target::pin_out(3, 7);
   auto green_led = hwlib::target::pin_out(3, 8);
   mpu6050 sensor(0x68, i2c);
-  auto display = hwlib::glcd_oled(i2c, 0x3C);
   std::array<char, 4> password = {'9', '2', '9', '2'};
 
 
-  security s(sensor, speaker, red_led, green_led, keypad, display, password);
+  security s(sensor, speaker, red_led, green_led, keypad, terminal, password);
 
 
   s.activate();

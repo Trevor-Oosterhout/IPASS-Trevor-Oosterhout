@@ -5,8 +5,7 @@ void security::reset(){
   speaker.write(0);
   green_led.write(0);
   red_led.write(0);
-  display.clear();
-  display.flush();
+  terminal << '\f' << hwlib::flush;
   sensor.reset();
 }
 
@@ -14,12 +13,13 @@ void security::reset(){
 void security::setup(){
   sensor.disable_sleep_mode();
   green_led.write(1);
+  terminal << "STATUS" << '\n' << "GOOD" <<hwlib::flush;
 }
 
 
-bool security::detect(std::array<int16_t, 3> & accel_measurements){
-  sensor.accel_measurements(accel_measurements);
-  if((accel_measurements[2] < 500 || accel_measurements[2] > 1300)){
+bool security::detect(){
+  int16_t accel_measurements = sensor.accel_z_measurement();
+  if(accel_measurements > 1100){
       return true;
     }
   else{
@@ -37,17 +37,16 @@ void security::triggerd(){
 
 void security::input_password(){
   std::array<char, 4> input;
-  char buffer;
   unsigned int index = 0;
-  auto font = hwlib::font_default_16x16();
-  auto terminal = hwlib::terminal_from(display, font);
+  char buffer = '\0';
   while(input != password){
     index = 0;
+    buffer = '\0';
     terminal << '\f';
     terminal << "PASSWORD" << '\n' << "$ " << hwlib::flush;
-    while(index != 4){
+    while(buffer != '#'){
         buffer = keypad.pressed();
-        if(buffer != '\0'){
+        if(buffer != '\0' && buffer != '#' && index < 4){
           terminal << buffer << hwlib::flush;
           input[index] = buffer;
           index++;
@@ -71,8 +70,7 @@ void security::activate(){
   for(;;){
     reset();
     setup();
-    std::array<int16_t, 3> accel_measurements;
-    while (!detect(accel_measurements)){}
+    while (!detect()){}
     triggerd();
     input_password();
   }
