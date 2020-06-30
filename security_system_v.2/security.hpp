@@ -28,7 +28,7 @@ public:
   /// \brief
   /// create a security system from: mpu6050, oled 128x64, circel speaker, red_led, green_led, keypad 4x4
   /// \details
-  ///
+  /// contructor initializes all attributes 
   security(mpu6050 & sensor, hwlib::pin_out & speaker, hwlib::pin_out & red_led,
   hwlib::pin_out & green_led, hwlib::keypad< 16 > & keypad,
   hwlib::terminal_from & terminal, const std::array<char, 4> & password):
