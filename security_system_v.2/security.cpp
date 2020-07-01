@@ -19,7 +19,7 @@ void security::setup(){
 
 bool security::detect(){
   int16_t accel_measurements = sensor.accel_z_measurement();
-  if(accel_measurements > 1100){
+  if(accel_measurements > 1200){
       return true;
     }
   else{
